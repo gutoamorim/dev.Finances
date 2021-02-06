@@ -10,6 +10,8 @@ const Modal = {
     }
 }
 
+
+
 const transactions = [
     {
         id: 1,
@@ -38,18 +40,42 @@ const transactions = [
 ]
 
 
+
 const Transaction = {
+    all: transactions,
+    
+
     incomes() {
-        // somar as entradas
+
+        let income = 0;
+
+        Transaction.all.forEach(transaction => {
+            if( transaction.amount > 0 ) {
+                income += transaction.amount
+            }
+        })
+
+        return income
     },
 
     expenses() {
-        // somar as saídas
+        
+        let expense = 0;
+
+        Transaction.all.forEach(transaction => {
+            if( transaction.amount < 0 ) {
+                expense += transaction.amount
+            }
+        })
+
+        return expense
     },
+
     total() {
-        //entradas - saídas
+        return Transaction.incomes() + Transaction.expenses()
     }
 }
+
 
 
 const DOM = {
@@ -83,12 +109,13 @@ const DOM = {
 
 
     updateBalance() {
-        document.getElementById('incomeDisplay').innerHTML = "Soma das entradas"
-        document.getElementById('expenseDisplay').innerHTML = "Soma das saídas"
-        document.getElementById('totalDisplay').innerHTML = "total"
+        document.getElementById('incomeDisplay').innerHTML = Utils.formatCurrency(Transaction.incomes())
+        document.getElementById('expenseDisplay').innerHTML = Utils.formatCurrency(Transaction.expenses())
+        document.getElementById('totalDisplay').innerHTML = Utils.formatCurrency(Transaction.total())
     }
      
 }
+
 
 
 const Utils = {
@@ -104,6 +131,7 @@ const Utils = {
         return signal + value
     }
 }
+
 
 
 transactions.forEach(function(transaction) {

@@ -10,30 +10,19 @@ const Modal = {
     }
 }
 
+const Storage = {
+    get() {
+        return JSON.parse(localStorage.getItem("dev.finances:transaction")) || []
+    },
+
+    set(transaction) {
+        localStorage.setItem("dev.finances:transaction", JSON.stringify(transaction))
+    }
+}
+
 
 const Transaction = {
-    all: [
-        {
-            description: 'Luz',
-            amount: -10000,
-            date: '05/02/2021'
-        },
-        {
-            description: 'Salário',
-            amount: 169400,
-            date: '05/02/2021'
-        },
-        {
-            description: 'Internet',
-            amount: -8900,
-            date: '05/02/2021'
-        },
-        {
-            description: 'Bico',
-            amount: 5000,
-            date: '05/02/2021'
-        }
-    ],
+    all: Storage.get(),
 
 
     add(transaction) {
@@ -86,13 +75,14 @@ const DOM = {
     addTransaction(transaction, index) {
         const tr = document.createElement('tr')
         tr.innerHTML = DOM.innerHTMLTransaction(transaction, index)
-        td.dataset.index = index
+        tr.dataset.index = index
+        
 
         DOM.transactionsContainer.appendChild(tr)
 
     },
 
-    innerHTMLTransaction(transaction) {
+    innerHTMLTransaction(transaction, index) {
 
         const CSSClass = transaction.amount > 0 ? "income" : "expense"
 
@@ -103,7 +93,7 @@ const DOM = {
             <td class="${CSSClass}">${amount}</td>
             <td class="date">${transaction.date}</td>
             <td>
-                <img src="./assets/minus.svg" alt="Remover Transação">
+                <img onclick="Transaction.remove(${index})" src="./assets/minus.svg" alt="Remover Transação">
             </td>
         `
 
@@ -232,11 +222,11 @@ const Form = {
 
 const App = {
     init() {
-        Transaction.all.forEach(transaction => {
-            DOM.addTransaction(transaction)
-        })
+        Transaction.all.forEach(DOM.addTransaction)
 
         DOM.updateBalance()
+
+        Storage.set(Transaction.all)
 
 
     },
@@ -249,4 +239,3 @@ const App = {
 }
 
 App.init()
-
